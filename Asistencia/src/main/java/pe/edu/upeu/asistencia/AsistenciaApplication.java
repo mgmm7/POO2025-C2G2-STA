@@ -40,7 +40,7 @@ public class AsistenciaApplication extends Application {
 		Rectangle2D bounds = screen.getBounds();
 		stage.setScene(new Scene(parent,bounds.getWidth(), bounds.getHeight()- 80));
 		//stage.show();
-		stage.setTitle("Spring Java-FX");
+		stage.setTitle("modo S");
 		stage.show();
 	}
 }
