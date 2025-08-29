@@ -4,34 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="015a0b2e-7584-453f-a641-027d7cfa6737" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../POO_Sem02_ClasesObjetosyEncapsulamiento/src/main/java/pe/edu/upeu/modelo/Persona.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../POO_Sem02_ClasesObjetosyEncapsulamiento/src/main/java/pe/edu/upeu/utils/Lectura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../POO_Sem02_ClasesObjetosyEncapsulamiento/src/main/java/pe/edu/upeu/vistacontrol/Index.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../POO_Semana03_Herencia/src/main/java/pe/edu/upeu/modelo/Persona.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../POO_Semana03_Herencia/src/main/java/pe/edu/upeu/modelo/Trabajador.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../POO_Semana03_Herencia/src/main/java/pe/edu/upeu/vistacontrol/index.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-3/src/main/java/pe/edu/upeu/constructor_con_parametros/modelo/Curso.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-3/src/main/java/pe/edu/upeu/constructor_con_parametros/utils/Lectura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-3/src/main/java/pe/edu/upeu/constructor_con_parametros/vistacontrol/Index.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-3/src/main/java/pe/edu/upeu/constructor_vacio/modelo/Curso.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-3/src/main/java/pe/edu/upeu/constructor_vacio/utils/Lectura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-3/src/main/java/pe/edu/upeu/constructor_vacio/vistacontrol/Index.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/modelo/Estudiante.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/modelo/Persona.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/modelo/Trabajador.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/utils/Lectura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/utils/Utiliarios.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/vistacontrol/Index.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/vistacontrol/IndexEstudiante.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/vistacontrol/IndexTrabajador.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea-4/src/main/java/pe/edu/upeu/vistacontrol/indexprincipal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea_2/src/main/java/pe/edu/upeu/modelo/Municipalidad.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea_2/src/main/java/pe/edu/upeu/utils/Lectura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Tarea_2/src/main/java/pe/edu/upeu/vistacontrol/Index.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tarea_3/src/main/java/pe/edu/upeu/modelo/Persona.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tarea_3/src/main/java/pe/edu/upeu/vistacontrol/Index.java" afterDir="false" />
-    </list>
+    <list default="true" id="015a0b2e-7584-453f-a641-027d7cfa6737" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
