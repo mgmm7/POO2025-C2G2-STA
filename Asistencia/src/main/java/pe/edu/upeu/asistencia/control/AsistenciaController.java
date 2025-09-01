@@ -29,11 +29,11 @@ public class AsistenciaController {
         Participante participante = new Participante();
         participante.setNombre(new SimpleStringProperty(txtdato.getText()));
         participante.setEstado(new SimpleBooleanProperty(true));
-        participanteServicioI.saveEntidad(participante);
+        participanteServicioI.save(participante);
         listaEstudiantes();
     }
     void listaEstudiantes(){
-        for (Participante e: participanteServicioI.findAllEntidades()){
+        for (Participante e: participanteServicioI.findAll()){
             System.out.println(e.getNombre());
         }
     }

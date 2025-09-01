@@ -5,15 +5,15 @@ import pe.edu.upeu.asistencia.modelo.Participante;
 import java.util.List;
 
 public interface ParticipanteServicioI {
-    void saveEntidad(Participante participante); //C
+    void save(Participante participante); //C
 
-    List<Participante> findAllEntidades();//R
+    List<Participante> findAll();//R
 
-    void deleteEntidad(Participante participante, int index);//U
+    void delete(Participante participante, int index);//U
 
-    void updateEntidad(Participante participante, int index);//D
+    void update(Participante participante, int index);//D
 
-    Participante findEntidad(int index);//Buscar ese
+    Participante findByid(int index);//Buscar ese
 
 
 
