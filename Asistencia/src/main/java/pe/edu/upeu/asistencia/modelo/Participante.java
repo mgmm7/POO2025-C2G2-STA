@@ -5,7 +5,7 @@ import javafx.beans.property.StringProperty;
 import lombok.Data;
 
 @Data
-public class Estudiante {
+public class Participante {
     private StringProperty nombre;
     private BooleanProperty estado;
 }
