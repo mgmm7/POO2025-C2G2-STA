@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import pe.edu.upeu.asistencia.modelo.Participante;
 import pe.edu.upeu.asistencia.repositorio.ParticianteRepositorio;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 public class ParticianteServisioImp extends ParticianteRepositorio implements ParticipanteServicioI {
@@ -15,6 +16,9 @@ public class ParticianteServisioImp extends ParticianteRepositorio implements Pa
 
     @Override
     public List<Participante> findAll() {
+        if (listaParticipantes.isEmpty()) {
+            return super.findAll();
+        }
         return listaParticipantes;
     }
 
