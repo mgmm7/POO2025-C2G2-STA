@@ -9,7 +9,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="MenuItem1" mnemonicParsing="false" text="AdminParticipante" />
+                  <MenuItem fx:id="MenuItemC" mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
         </menus>
