@@ -40,6 +40,26 @@ public class ParticipanteController {
         definirColumnas();
         listarParticipantes();
     }
+    public void LimpiarFormulario(){
+        txtNombres.setText("");
+        txtDni.setText("");
+        txtApellidos.setText("");
+        cbxCarrera.setValue(null);
+        cbxTipoParticipante.setValue(null);
+
+    }
+    public void RegistrarParticipante(){
+        Participante p = new Participante();
+        p.setDni(new SimpleStringProperty(txtDni.getText()));
+        p.setNombre(new SimpleStringProperty(txtNombres.getText()));
+        p.setApellido(new SimpleStringProperty(txtApellidos.getText()));
+        p.setCarrera(cbxCarrera.getSelectionModel().getSelectedItem());
+        p.setTipoParticipante(cbxTipoParticipante.getSelectionModel().getSelectedItem());
+        ps.save(p);
+        LimpiarFormulario();
+        listarParticipantes();
+
+    }
     public void definirColumnas(){
         dniColum=new TableColumn("DNI");
         nombreColum=new TableColumn("NOMBRE");
