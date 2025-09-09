@@ -9,7 +9,7 @@ public interface ParticipanteServicioI {
 
     List<Participante> findAll();//R
 
-    void delete(Participante participante, int index);//U
+    void delete(int index);//U
 
     void update(Participante participante, int index);//D
 

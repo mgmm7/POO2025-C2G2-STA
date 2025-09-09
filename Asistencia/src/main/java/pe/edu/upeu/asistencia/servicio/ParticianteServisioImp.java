@@ -23,7 +23,7 @@ public class ParticianteServisioImp extends ParticianteRepositorio implements Pa
     }
 
     @Override
-    public void delete(Participante participante, int index) {
+    public void delete( int index) {
         listaParticipantes.remove(index);
     }
 
