@@ -72,6 +72,7 @@ public class ParticipanteController {
         carreraColum=new TableColumn("Carrera");
         tipoPartColum=new TableColumn("Tipo Participante");
         opcColum=new TableColumn("Opciones");
+        opcColum.setPrefWidth(200);
         tableView.getColumns().addAll(dniColum, nombreColum, apellidoColum, carreraColum, tipoPartColum, opcColum);
     }
     public void agregarAccionBotones(){

@@ -6,6 +6,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,34 @@ public class MainguiController {
     TabPane tabPane;
     @FXML
     MenuItem MenuItem1, MenuItemC;
+    Menu menuEstilos=new Menu("Cambiar estilos");
+    ComboBox<String> comboEstilo=new ComboBox<>();
+    CustomMenuItem customMenuItem=new CustomMenuItem(comboEstilo);
     @Autowired
     ApplicationContext context;
 
     public void initialize() {
+        comboEstilo.getItems().addAll("Estilo por defecto","Estilo oscuro","Estilo azul","Estilo rosado","Estilo verde");
+        comboEstilo.setOnAction(e->cambiarEstilo());
+        customMenuItem.setHideOnClick(false);
+        menuEstilos.getItems().addAll(customMenuItem);
+        menuBar.getMenus().addAll(menuEstilos);
         MenuItemListener mIL=new MenuItemListener();
         MenuItem1.setOnAction(mIL::handle);
         MenuItemC.setOnAction(mIL::handle);
     }
-
+    public void cambiarEstilo(){
+        String estilo=comboEstilo.getSelectionModel().getSelectedItem();
+        Scene scene=bp.getScene();
+        scene.getStylesheets().clear();
+        switch(estilo){
+            case "Estilo oscuro":scene.getStylesheets().add(getClass().getResource("/css/css/estilo-oscuro.css").toExternalForm());break;
+            case "Estilo azul":scene.getStylesheets().add(getClass().getResource("/css/css/estilo-azul.css").toExternalForm());break;
+            case "Estilo rosado":scene.getStylesheets().add(getClass().getResource("/css/css/estilo-rosado.css").toExternalForm());break;
+            case "Estilo verde":scene.getStylesheets().add(getClass().getResource("/css/css/estilo-verde.css").toExternalForm());break;
+            default:break;
+        }
+    }
     class MenuItemListener{
         Map<String, String[]> menuConfig=Map.of(
                 "MenuItem1", new String[]{"/fxml/main_participante.fxml","Reg.Participante","T"},
