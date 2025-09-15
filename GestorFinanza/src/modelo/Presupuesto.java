@@ -20,7 +20,9 @@ public class Presupuesto {
     public String toCSV() {
         return usuario + "," + categoria + "," + limite + "," + gastado;
     }
-
+    public void setLimite(double limite) {
+        this.limite = limite;
+    }
     public static Presupuesto fromCSV(String line) {
         try {
             String[] p = line.split(",");

@@ -29,7 +29,6 @@ public class GestorFinanzas {
         // ensure data folder exists
         FileUtils.ensureDataFolder();
     }
-
     public void cargarDatos() {
         try {
             List<String> us = FileUtils.readLines(pathUsers);
@@ -79,7 +78,6 @@ public class GestorFinanzas {
         }
 
     }
-
     public void guardarDatos() {
         try {
             List<String> us = new ArrayList<>();
@@ -109,7 +107,6 @@ public class GestorFinanzas {
         }
 
     }
-
     public boolean registrarUsuario(String nombre, String contrasena, String carrera, int edad) {
         if (usuarios.containsKey(nombre)) return false;
         Usuario u = new Usuario(nombre, contrasena, carrera, edad);
@@ -127,15 +124,13 @@ public class GestorFinanzas {
         return true;
 
     }
-
     public Usuario login(String usuario, String contrasena) {
         Usuario u = usuarios.get(usuario);
         if (u==null) return null;
         if (!u.getContrasena().equals(contrasena)) return null;
         return u;
     }
-
-    private void menuUsuario(Usuario u, Scanner sc) {
+    public void menuUsuario(Usuario u, Scanner sc) {
         while (true) {
             System.out.println("\n--- Menú Usuario ---");
             System.out.println("1) Registrar ingreso");
@@ -143,7 +138,8 @@ public class GestorFinanzas {
             System.out.println("3) Reporte detallado");
             System.out.println("4) Metas de ahorro");
             System.out.println("5) Gestión de presupuestos y asignaciones");
-            System.out.println("6) Cerrar sesión");
+            System.out.println("6) Resetear todos los datos (comenzar de nuevo)");
+            System.out.println("7) Cerrar sesión");
             System.out.print("Opción: ");
             String opt = sc.nextLine().trim();
 
@@ -152,12 +148,11 @@ public class GestorFinanzas {
             else if (opt.equals("3")) generarReporteUsuario(u);
             else if (opt.equals("4")) menuMetas(u, sc);
             else if (opt.equals("5")) menuGestionPresupuestos(u, sc);
-            else if (opt.equals("6")) break;
+            else if (opt.equals("6")) resetearDatos();
+            else if (opt.equals("7")) break;
             else System.out.println("Inválido.");
         }
     }
-
-
     private void registrarMovimiento(Usuario u, Scanner sc, String tipo) {
         try {
             System.out.print("Monto: ");
@@ -199,8 +194,9 @@ public class GestorFinanzas {
                 }
                 double gastadoActual = (presupuesto != null) ? presupuesto.getGastado() : 0.0;
 
-                boolean excedeAsignado = monto > saldoActual;
-                boolean excedePresupuesto = (presupuesto != null && presupuesto.getLimite() > 0 && (gastadoActual + monto) > presupuesto.getLimite());
+                boolean excedeAsignado = !cat.equals("Ahorro") && monto > saldoActual;
+                boolean excedePresupuesto = !cat.equals("Ahorro") &&
+                        (presupuesto != null && presupuesto.getLimite() > 0 && (gastadoActual + monto) > presupuesto.getLimite());
 
                 // Advertencia saldo asignado
                 if (excedeAsignado) {
@@ -232,16 +228,22 @@ public class GestorFinanzas {
                 Transaccion t = new Transaccion(nextId++, u.getNombre(), LocalDateTime.now(), monto, cat, desc, tipo);
                 transacciones.add(t);
 
-                // Actualizar saldos
-                catSaldo.put(cat, saldoActual - monto);
-                if (presupuesto != null) {
-                    presupuesto.setGastado(presupuesto.getGastado() + monto);
-                }
+                if (cat.equals("Ahorro")) {
+                    // En ahorro el saldo sube, pero se descuenta del saldo general
+                    catSaldo.put(cat, saldoActual + monto);
+                    u.setSaldoGeneral(u.getSaldoGeneral() - monto);
+                    if (u.getSaldoGeneral() < 0) u.setSaldoGeneral(0);
 
-                // Meta ahorro
-                MetaAhorro m = metas.get(u.getNombre());
-                if (m != null && cat.equals("Ahorro")) {
-                    m.setMontoActual(Math.max(0, m.getMontoActual() - monto));
+                    MetaAhorro m = metas.get(u.getNombre());
+                    if (m != null) {
+                        m.setMontoActual(m.getMontoActual() + monto);
+                    }
+                } else {
+                    // En otras categorías el saldo baja
+                    catSaldo.put(cat, saldoActual - monto);
+                    if (presupuesto != null) {
+                        presupuesto.setGastado(presupuesto.getGastado() + monto);
+                    }
                 }
 
                 guardarDatos();
@@ -265,7 +267,6 @@ public class GestorFinanzas {
             System.out.println("Error registrando movimiento: " + e.getMessage());
         }
     }
-
     private void listarTransaccionesUsuario(Usuario u) {
         System.out.println("--- Transacciones de " + u.getNombre() + " ---");
         for (Transaccion t : transacciones) {
@@ -319,32 +320,60 @@ public class GestorFinanzas {
         Map<String, Double> catSaldo = saldosCategorias.getOrDefault(u.getNombre(), new HashMap<>());
 
         for (String c : cats) {
-            double saldoActual = catSaldo.getOrDefault(c, 0.0);
-            double gastado = gastoPorCat.getOrDefault(c, 0.0);
-            double asignadoTotal = saldoActual + gastado;
+            if (c.equals("Ahorro")) {
+                // Reporte especial para ahorro
+                double ahorrado = catSaldo.getOrDefault(c, 0.0);
+                MetaAhorro m = metas.get(u.getNombre());
+                String progreso = "";
+                if (m != null && m.getMontoMeta() > 0) {
+                    double porc = (m.getMontoActual() / m.getMontoMeta()) * 100;
+                    progreso = " | Progreso meta: " + String.format("%.2f", porc) + "%";
+                }
+                System.out.println("\nCategoría: Ahorro");
+                System.out.println("  - Ahorrado: " + ahorrado + progreso);
 
-            double limite = 0;
-            for (Presupuesto p : presupuestos) {
-                if (p.getUsuario().equals(u.getNombre()) && p.getCategoria().equals(c)) {
-                    limite = p.getLimite();
-                    break;
+                // Mostrar transacciones de ahorro
+                for (Transaccion t : transacciones) {
+                    if (t.getUsuario().equals(u.getNombre()) && "Ahorro".equals(t.getCategoria())) {
+                        System.out.println("    • " + t.getTipo() + ": " + t.getMonto() + " (" + t.getDescripcion() + ")");
+                    }
+                }
+            } else {
+                double saldoActual = catSaldo.getOrDefault(c, 0.0);
+                double gastado = gastoPorCat.getOrDefault(c, 0.0);
+                double asignadoTotal = saldoActual + gastado;
+
+                double limite = 0;
+                for (Presupuesto p : presupuestos) {
+                    if (p.getUsuario().equals(u.getNombre()) && p.getCategoria().equals(c)) {
+                        limite = p.getLimite();
+                        break;
+                    }
+                }
+
+                String adv = "";
+                if (saldoActual < 0) adv += " ⚠ saldo negativo";
+                if (limite > 0 && gastado > limite) adv += " ⚠ excediste presupuesto";
+
+                System.out.println("\nCategoría: " + c);
+                System.out.println("  - Asignado: " + asignadoTotal);
+                System.out.println("  - Gastado: " + gastado);
+                System.out.println("  - Saldo actual: " + saldoActual + adv);
+
+                // Mostrar transacciones normales
+                for (Transaccion t : transacciones) {
+                    if (t.getUsuario().equals(u.getNombre()) && c.equals(t.getCategoria())) {
+                        System.out.println("    • " + t.getTipo() + ": " + t.getMonto() + " (" + t.getDescripcion() + ")");
+                    }
                 }
             }
+        }
 
-            String adv = "";
-            if (saldoActual < 0) adv += " ⚠ saldo negativo";
-            if (limite > 0 && gastado > limite) adv += " ⚠ excediste presupuesto";
-
-            System.out.println("\nCategoría: " + c);
-            System.out.println("  - Asignado: " + asignadoTotal);
-            System.out.println("  - Gastado: " + gastado);
-            System.out.println("  - Saldo actual: " + saldoActual + adv);
-
-            // Mostrar transacciones de esa categoría
-            for (Transaccion t : transacciones) {
-                if (t.getUsuario().equals(u.getNombre()) && c.equals(t.getCategoria())) {
-                    System.out.println("    • " + t.getTipo() + ": " + t.getMonto() + " (" + t.getDescripcion() + ")");
-                }
+        // Mostrar transacciones de ingresos también
+        System.out.println("\n--- Detalle de ingresos ---");
+        for (Transaccion t : transacciones) {
+            if (t.getUsuario().equals(u.getNombre()) && "INGRESO".equals(t.getTipo())) {
+                System.out.println("  • Ingreso: " + t.getMonto() + " (" + t.getDescripcion() + ")");
             }
         }
 
@@ -357,21 +386,38 @@ public class GestorFinanzas {
             lines.add("Saldo general disponible: " + u.getSaldoGeneral());
             lines.add("--- Detalle por categoría ---");
             for (String c : cats) {
-                double saldoActual = catSaldo.getOrDefault(c, 0.0);
-                double gastado = gastoPorCat.getOrDefault(c, 0.0);
-                double asignadoTotal = saldoActual + gastado;
-                double limite = 0;
-                for (Presupuesto p : presupuestos) {
-                    if (p.getUsuario().equals(u.getNombre()) && p.getCategoria().equals(c)) {
-                        limite = p.getLimite();
-                        break;
+                if (c.equals("Ahorro")) {
+                    double ahorrado = catSaldo.getOrDefault(c, 0.0);
+                    MetaAhorro m = metas.get(u.getNombre());
+                    String progreso = "";
+                    if (m != null && m.getMontoMeta() > 0) {
+                        double porc = (m.getMontoActual() / m.getMontoMeta()) * 100;
+                        progreso = " | Progreso meta: " + String.format("%.2f", porc) + "%";
                     }
+                    lines.add("Ahorro -> Ahorrado: " + ahorrado + progreso);
+                } else {
+                    double saldoActual = catSaldo.getOrDefault(c, 0.0);
+                    double gastado = gastoPorCat.getOrDefault(c, 0.0);
+                    double asignadoTotal = saldoActual + gastado;
+                    double limite = 0;
+                    for (Presupuesto p : presupuestos) {
+                        if (p.getUsuario().equals(u.getNombre()) && p.getCategoria().equals(c)) {
+                            limite = p.getLimite();
+                            break;
+                        }
+                    }
+                    String linea = c + " -> Asignado: " + asignadoTotal + " | Gastado: " + gastado +
+                            " | Saldo actual: " + saldoActual;
+                    if (saldoActual < 0) linea += " ⚠ saldo negativo";
+                    if (limite > 0 && gastado > limite) linea += " ⚠ excediste presupuesto";
+                    lines.add(linea);
                 }
-                String linea = c + " -> Asignado: " + asignadoTotal + " | Gastado: " + gastado +
-                        " | Saldo actual: " + saldoActual;
-                if (saldoActual < 0) linea += " ⚠ saldo negativo";
-                if (limite > 0 && gastado > limite) linea += " ⚠ excediste presupuesto";
-                lines.add(linea);
+            }
+            lines.add("--- Detalle de ingresos ---");
+            for (Transaccion t : transacciones) {
+                if (t.getUsuario().equals(u.getNombre()) && "INGRESO".equals(t.getTipo())) {
+                    lines.add("  • Ingreso: " + t.getMonto() + " (" + t.getDescripcion() + ")");
+                }
             }
             FileUtils.writeLines("data/report_" + u.getNombre() + ".txt", lines);
             System.out.println("✅ Reporte exportado a data/report_" + u.getNombre() + ".txt");
@@ -483,7 +529,6 @@ public class GestorFinanzas {
         guardarDatos();
         System.out.println("✅ Límite establecido para " + cat + ": " + limite);
     }
-
     private void verAsignacionesYLímites(Usuario u) {
         System.out.println("--- Asignaciones y límites de " + u.getNombre() + " ---");
         Map<String, Double> catSaldo = saldosCategorias.get(u.getNombre());
@@ -503,5 +548,28 @@ public class GestorFinanzas {
             System.out.println(c + " -> Asignado: " + asignado + " | Límite: " + (limite == 0 ? "No establecido" : limite));
         }
     }
+    private void resetearDatos() {
+        // 🔹 Mantener usuarios
+        // No hacemos usuarios.clear();
+        for (Usuario u : usuarios.values()) {
+            u.setSaldoGeneral(0);
+        }
+        // 🔹 Borrar todo lo demas
+        transacciones.clear();
+        presupuestos.clear();
+        saldosCategorias.clear();
+        metas.clear();
 
+        try {
+            // Guardar los cambios en archivos vacíos
+            FileUtils.writeLines(pathTrans, new ArrayList<>()); // transacciones vacías
+            FileUtils.writeLines(pathPres, new ArrayList<>());  // presupuestos vacíos
+            FileUtils.writeLines(pathMetas, new ArrayList<>()); // metas vacías
+            FileUtils.writeLines(pathSaldos, new ArrayList<>()); // saldos vacíos
+        } catch (Exception e) {
+            System.out.println("Error reseteando archivos: " + e.getMessage());
+        }
+
+        System.out.println("✅ Todos los datos (menos usuarios) fueron eliminados.");
+    }
 }
