@@ -16,5 +16,9 @@
         <Button fx:id="btnPresupuesto" text="Presupuesto"/>
         <Button fx:id="btnMetas" text="Metas"/>
     </HBox>
+    <HBox spacing="5" alignment="CENTER">
+        <TextField fx:id="montoField" promptText="Monto" prefWidth="120"/>
+        <TextField fx:id="descripcionField" promptText="Descripción" prefWidth="240"/>
+    </HBox>
     <TextArea fx:id="outputArea" prefRowCount="10" wrapText="true"/>
 </VBox>
