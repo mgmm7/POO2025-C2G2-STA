@@ -28,15 +28,20 @@ public class ReporteController {
         colMonto.setCellValueFactory(new PropertyValueFactory<>("monto"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        // conectar tabla al observable compartido
+        // 👇 nueva columna de saldo
+        TableColumn<Movimiento, Double> colSaldo = new TableColumn<>("Saldo");
+        colSaldo.setCellValueFactory(new PropertyValueFactory<>("saldo"));
+
+        tablaReporte.getColumns().add(colSaldo);
+
+        // Items
         tablaReporte.setItems(service.listarMovimientos());
 
-        // 👉 cada vez que cambie la lista, recalculamos el saldo
+        // Listener de saldo general
         service.listarMovimientos().addListener((javafx.collections.ListChangeListener<Movimiento>) c -> {
             saldoLabel.setText(String.format("%.2f", service.calcularSaldo()));
         });
 
-        // mostrar saldo inicial
         saldoLabel.setText(String.format("%.2f", service.calcularSaldo()));
 
     }

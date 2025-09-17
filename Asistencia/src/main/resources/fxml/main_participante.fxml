@@ -75,7 +75,7 @@
                         </GridPane>
                         <AnchorPane>
                            <children>
-                              <TableView fx:id="tableView" layoutY="51.0" prefWidth="700.0" />
+                              <TableView fx:id="tableView" layoutY="51.0" />
                            </children></AnchorPane>
                      </children>
                   </HBox>

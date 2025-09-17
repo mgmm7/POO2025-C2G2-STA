@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,7 @@ import java.io.IOException;
 
 @Controller
 public class MovimientoController {
+    private Movimiento movimientoEnEdicion = null;
     @FXML private TableView<Movimiento> tablaMovimientos;
     @FXML private Label saldoLabel;
     @FXML private TextField descripcionField;
@@ -44,7 +46,6 @@ public class MovimientoController {
         tablaMovimientos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tablaMovimientos.getColumns().clear();
 
-        // Crear columnas de la tabla
         TableColumn<Movimiento, String> colDescripcion = new TableColumn<>("Descripción");
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
@@ -54,11 +55,44 @@ public class MovimientoController {
         TableColumn<Movimiento, TipoMovimiento> colTipo = new TableColumn<>("Tipo");
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        // Agregar columnas a la tabla
-        tablaMovimientos.getColumns().addAll(colDescripcion, colMonto, colTipo);
+        // 👇 nueva columna Saldo
+        TableColumn<Movimiento, Double> colSaldo = new TableColumn<>("Saldo");
+        colSaldo.setCellValueFactory(new PropertyValueFactory<>("saldo"));
 
-        // Inicializar items
-        tablaMovimientos.setItems(service.listarMovimientos()); // 👈 observable compartido
+        // 👉 columna Opciones (Editar y Borrar)
+        TableColumn<Movimiento, Void> colOpciones = new TableColumn<>("Opciones");
+        colOpciones.setCellFactory(param -> new TableCell<>() {
+            private final Button btnEditar = new Button("Editar");
+            private final Button btnBorrar = new Button("Borrar");
+
+            {
+                btnEditar.setOnAction(event -> {
+                    Movimiento mov = getTableView().getItems().get(getIndex());
+                    editarMovimiento(mov);
+                });
+
+                btnBorrar.setOnAction(event -> {
+                    Movimiento mov = getTableView().getItems().get(getIndex());
+                    borrarMovimiento(mov);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    HBox box = new HBox(5, btnEditar, btnBorrar);
+                    setGraphic(box);
+                }
+            }
+        });
+
+        // 👉 ahora la tabla tiene 5 columnas
+        tablaMovimientos.getColumns().addAll(colDescripcion, colMonto, colTipo, colSaldo, colOpciones);
+
+        tablaMovimientos.setItems(service.listarMovimientos());
         actualizarSaldo();
     }
 
@@ -77,19 +111,46 @@ public class MovimientoController {
             showAlert("Monto inválido", "Ingrese un número válido para monto.");
             return;
         }
-        Movimiento m = new Movimiento(desc, monto, tipoCombo.getValue());
-        service.registrarMovimiento(m);
 
-
-        // recargo la tabla desde la lista del service
+        if (movimientoEnEdicion == null) {
+            // 👉 Caso normal: crear nuevo
+            Movimiento m = new Movimiento(desc, monto, tipoCombo.getValue());
+            service.registrarMovimiento(m);
+            showInfo("Guardado", "Movimiento registrado correctamente.");
+        } else {
+            // 👉 Caso edición: actualizar atributos del existente
+            movimientoEnEdicion.setDescripcion(desc);
+            movimientoEnEdicion.setMonto(monto);
+            movimientoEnEdicion.setTipo(tipoCombo.getValue());
+            tablaMovimientos.refresh(); // refrescar la tabla por si acaso
+            showInfo("Actualizado", "Movimiento actualizado correctamente.");
+            movimientoEnEdicion = null; // reset para futuras creaciones
+        }
 
         actualizarSaldo();
         clearFields();
-        showInfo("Guardado", "Movimiento registrado correctamente.");
     }
     private void actualizarSaldo() {
         double balance = service.calcularBalance();
         saldoLabel.setText(String.format("Saldo: %.2f", balance));
+    }
+    private void editarMovimiento(Movimiento mov) {
+        descripcionField.setText(mov.getDescripcion());
+        montoField.setText(String.valueOf(mov.getMonto()));
+        tipoCombo.setValue(mov.getTipo());
+
+        movimientoEnEdicion = mov; // 👈 guardamos referencia al que se está editando
+    }
+
+    private void borrarMovimiento(Movimiento mov) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "¿Seguro que deseas eliminar este movimiento?",
+                ButtonType.YES, ButtonType.NO);
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                service.eliminarMovimiento(mov);
+            }
+        });
     }
     private void showError(String title, String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);

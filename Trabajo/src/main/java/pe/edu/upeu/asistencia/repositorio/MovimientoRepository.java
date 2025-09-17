@@ -16,7 +16,7 @@ public class MovimientoRepository {
     }
 
     public ObservableList<Movimiento> findAll() {
-        return DATA; // 👈 devolvemos la misma lista, no una copia
+        return DATA;
     }
 
     public void delete(Movimiento m) {

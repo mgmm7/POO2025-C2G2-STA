@@ -12,11 +12,17 @@ public class MovimientoService {
     private final MovimientoRepository repo = new MovimientoRepository();
 
     public void registrarMovimiento(Movimiento m) {
+        double saldoAnterior = calcularSaldo();
+        if (m.getTipo() == TipoMovimiento.INGRESO) {
+            m.setSaldo(saldoAnterior + m.getMonto());
+        } else {
+            m.setSaldo(saldoAnterior - m.getMonto());
+        }
         repo.save(m);
     }
 
     public ObservableList<Movimiento> listarMovimientos() {
-        return repo.findAll(); // 👈 devolvemos observable compartido
+        return repo.findAll();
     }
 
     public double calcularSaldo() {
@@ -33,5 +39,8 @@ public class MovimientoService {
             else gastos += m.getMonto();
         }
         return ingresos - gastos;
+    }
+    public void eliminarMovimiento(Movimiento m) {
+        repo.delete(m);
     }
 }

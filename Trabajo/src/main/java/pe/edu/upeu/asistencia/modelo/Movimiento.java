@@ -6,6 +6,7 @@ public class Movimiento {
     private String descripcion;
     private double monto;
     private TipoMovimiento tipo;
+    private double saldo;
 
     public Movimiento() {}
 
@@ -23,5 +24,8 @@ public class Movimiento {
 
     public TipoMovimiento getTipo() { return tipo; }
     public void setTipo(TipoMovimiento tipo) { this.tipo = tipo; }
+
+    public double getSaldo() { return saldo; }
+    public void setSaldo(double saldo) { this.saldo = saldo; }
 
 }
