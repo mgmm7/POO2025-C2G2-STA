@@ -7,10 +7,10 @@
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Opciones">
             <items>
-                  <MenuItem fx:id="MenuItem1" mnemonicParsing="false" text="Comenzar" />
-                  <MenuItem fx:id="MenuItemC" mnemonicParsing="false" text="Close" />
+
+                  <MenuItem fx:id="MenuItemC" mnemonicParsing="false" text="Cerrar" />
             </items>
           </Menu>
         </menus>
@@ -19,11 +19,14 @@
    <center>
       <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="Bienvenido">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
-          </Tab>
+            <Tab text="Bienvenido">
+                <content>
+                    <VBox alignment="CENTER" spacing="20" prefHeight="200" prefWidth="200">
+                        <Label text="Bienvenido al Gestor de Finanzas" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+                        <Button fx:id="btnIniciarSesion" text="Iniciar Sesión" onAction="#onIniciarSesion"/>
+                    </VBox>
+                </content>
+            </Tab>
         </tabs>
       </TabPane>
    </center>

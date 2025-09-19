@@ -1,6 +1,6 @@
 package pe.edu.upeu.asistencia.control;
 
-import javafx.collections.FXCollections;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -8,7 +8,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import pe.edu.upeu.asistencia.enums.TipoMovimiento;
 import pe.edu.upeu.asistencia.modelo.Movimiento;
 import pe.edu.upeu.asistencia.servicio.MovimientoService;
 @Controller
@@ -28,16 +27,16 @@ public class ReporteController {
         colMonto.setCellValueFactory(new PropertyValueFactory<>("monto"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        // 👇 nueva columna de saldo
+
         TableColumn<Movimiento, Double> colSaldo = new TableColumn<>("Saldo");
         colSaldo.setCellValueFactory(new PropertyValueFactory<>("saldo"));
 
         tablaReporte.getColumns().add(colSaldo);
 
-        // Items
+
         tablaReporte.setItems(service.listarMovimientos());
 
-        // Listener de saldo general
+
         service.listarMovimientos().addListener((javafx.collections.ListChangeListener<Movimiento>) c -> {
             saldoLabel.setText(String.format("%.2f", service.calcularSaldo()));
         });

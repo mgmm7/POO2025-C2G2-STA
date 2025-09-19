@@ -32,20 +32,16 @@ public class MovimientoController {
     @FXML private ComboBox<TipoMovimiento> tipoCombo;
     @FXML private Button guardarBtn;
     @FXML private Button reporteBtn;
-
     @Autowired
     private MovimientoService service;
     @Autowired
     private ApplicationContext context;
-
     @FXML
     public void initialize() {
-
         tipoCombo.setItems(FXCollections.observableArrayList(TipoMovimiento.values()));
         tipoCombo.getSelectionModel().selectFirst();
         tablaMovimientos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tablaMovimientos.getColumns().clear();
-
         TableColumn<Movimiento, String> colDescripcion = new TableColumn<>("Descripción");
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
@@ -55,11 +51,11 @@ public class MovimientoController {
         TableColumn<Movimiento, TipoMovimiento> colTipo = new TableColumn<>("Tipo");
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        // 👇 nueva columna Saldo
+
         TableColumn<Movimiento, Double> colSaldo = new TableColumn<>("Saldo");
         colSaldo.setCellValueFactory(new PropertyValueFactory<>("saldo"));
 
-        // 👉 columna Opciones (Editar y Borrar)
+
         TableColumn<Movimiento, Void> colOpciones = new TableColumn<>("Opciones");
         colOpciones.setCellFactory(param -> new TableCell<>() {
             private final Button btnEditar = new Button("Editar");
@@ -89,7 +85,7 @@ public class MovimientoController {
             }
         });
 
-        // 👉 ahora la tabla tiene 5 columnas
+
         tablaMovimientos.getColumns().addAll(colDescripcion, colMonto, colTipo, colSaldo, colOpciones);
 
         tablaMovimientos.setItems(service.listarMovimientos());
@@ -113,18 +109,17 @@ public class MovimientoController {
         }
 
         if (movimientoEnEdicion == null) {
-            // 👉 Caso normal: crear nuevo
+
             Movimiento m = new Movimiento(desc, monto, tipoCombo.getValue());
             service.registrarMovimiento(m);
-            showInfo("Guardado", "Movimiento registrado correctamente.");
+
         } else {
-            // 👉 Caso edición: actualizar atributos del existente
+
             movimientoEnEdicion.setDescripcion(desc);
             movimientoEnEdicion.setMonto(monto);
             movimientoEnEdicion.setTipo(tipoCombo.getValue());
-            tablaMovimientos.refresh(); // refrescar la tabla por si acaso
-            showInfo("Actualizado", "Movimiento actualizado correctamente.");
-            movimientoEnEdicion = null; // reset para futuras creaciones
+            tablaMovimientos.refresh();
+            movimientoEnEdicion = null;
         }
 
         actualizarSaldo();
@@ -139,7 +134,7 @@ public class MovimientoController {
         montoField.setText(String.valueOf(mov.getMonto()));
         tipoCombo.setValue(mov.getTipo());
 
-        movimientoEnEdicion = mov; // 👈 guardamos referencia al que se está editando
+        movimientoEnEdicion = mov;
     }
 
     private void borrarMovimiento(Movimiento mov) {
@@ -161,21 +156,21 @@ public class MovimientoController {
     private void onReporte(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/reporte.fxml"));
-            loader.setControllerFactory(context::getBean); // importante para que Spring inyecte beans
+            loader.setControllerFactory(context::getBean);
             Parent root = loader.load();
 
-            // pedir el controlador y recargar datos
+
             pe.edu.upeu.asistencia.control.ReporteController reporteCtrl = loader.getController();
             reporteCtrl.cargarDatos();
 
-            // agregar/seleccionar pestaña en el MainguiController (obtenido desde Spring)
+
             pe.edu.upeu.asistencia.control.MainguiController maingui = context.getBean(pe.edu.upeu.asistencia.control.MainguiController.class);
 
-            // si ya existe la pestaña, seleccionar y actualizar
+
             for (Tab t : maingui.tabPane.getTabs()) {
                 if ("Reporte".equals(t.getText())) {
                     maingui.tabPane.getSelectionModel().select(t);
-                    // opcional: forzar recarga cada vez que se selecciona
+
                     reporteCtrl.cargarDatos();
                     return;
                 }
@@ -185,7 +180,7 @@ public class MovimientoController {
             scroll.setFitToWidth(true);
             scroll.setFitToHeight(true);
             Tab newTab = new Tab("Reporte", scroll);
-            newTab.setUserData(reporteCtrl); // <-- asigna el controller que obtuviste antes: reporteCtrl
+            newTab.setUserData(reporteCtrl);
             maingui.tabPane.getTabs().add(newTab);
             maingui.tabPane.getSelectionModel().select(newTab);
 
