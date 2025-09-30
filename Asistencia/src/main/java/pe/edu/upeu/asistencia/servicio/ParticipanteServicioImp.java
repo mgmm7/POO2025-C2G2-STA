@@ -2,12 +2,12 @@ package pe.edu.upeu.asistencia.servicio;
 
 import org.springframework.stereotype.Service;
 import pe.edu.upeu.asistencia.modelo.Participante;
-import pe.edu.upeu.asistencia.repositorio.ParticianteRepositorio;
+import pe.edu.upeu.asistencia.repositorio.ParticipanteRepositorio;
 
-import java.util.ArrayList;
 import java.util.List;
+
 @Service
-public class ParticianteServisioImp extends ParticianteRepositorio implements ParticipanteServicioI {
+public class ParticipanteServicioImp extends ParticipanteRepositorio implements ParticipanteServicioI {
 
     @Override
     public void save(Participante participante) {
@@ -16,15 +16,10 @@ public class ParticianteServisioImp extends ParticianteRepositorio implements Pa
 
     @Override
     public List<Participante> findAll() {
-        if (listaParticipantes.isEmpty()) {
+        if(listaParticipantes.isEmpty()){
             return super.findAll();
         }
         return listaParticipantes;
-    }
-
-    @Override
-    public void delete( int index) {
-        listaParticipantes.remove(index);
     }
 
     @Override
@@ -33,7 +28,12 @@ public class ParticianteServisioImp extends ParticianteRepositorio implements Pa
     }
 
     @Override
-    public Participante findByid(int index) {
+    public void delete(int index) {
+        listaParticipantes.remove(index);
+    }
+
+    @Override
+    public Participante findById(int index) {
         return listaParticipantes.get(index);
     }
 }
