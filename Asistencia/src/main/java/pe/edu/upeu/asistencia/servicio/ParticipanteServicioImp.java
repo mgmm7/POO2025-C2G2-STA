@@ -1,35 +1,37 @@
 package pe.edu.upeu.asistencia.servicio;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.edu.upeu.asistencia.modelo.Participante;
-import pe.edu.upeu.asistencia.repositorio.ParticipanteRepositorio;
+import pe.edu.upeu.asistencia.repositorio.ParticipanteIRepositorio;
 
 import java.util.List;
 
 @Service
-public class ParticipanteServicioImp extends ParticipanteRepositorio implements ParticipanteServicioI {
-
+public class ParticipanteServicioImp implements ParticipanteServicioI {
+    @Autowired
+    ParticipanteIRepositorio  participanteIRepositorio;
     @Override
     public void save(Participante participante) {
-    super.save(participante);}
+    participanteIRepositorio.save(participante);}
 
     @Override
     public List<Participante> findAll() {
-        return super.findAll();
+        return participanteIRepositorio.findAll();
     }
 
     @Override
     public Participante update(Participante participante) {
-        return super.update(participante);
+        return participanteIRepositorio.save(participante);
     }
 
     @Override
     public void delete(String dni) {
-        super.delete(dni);
+        participanteIRepositorio.deleteById(dni);
     }
 
     @Override
-    public Participante findById(int index) {
-        return listaParticipantes.get(index);
+    public Participante findById(String dni) {
+        return participanteIRepositorio.findById(dni).orElseThrow();
     }
 }
