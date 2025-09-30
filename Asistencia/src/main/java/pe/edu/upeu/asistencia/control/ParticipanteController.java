@@ -1,5 +1,6 @@
 package pe.edu.upeu.asistencia.control;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -59,10 +60,11 @@ public class ParticipanteController {
         p.setApellidos(new SimpleStringProperty(txtApellidos.getText()));
         p.setCarrera(cbxCarrera.getSelectionModel().getSelectedItem());
         p.setTipoParticipante(cbxTipoParticipante.getSelectionModel().getSelectedItem());
+        p.setEstado(new SimpleBooleanProperty(true));
         if(indexE==-1){
             ps.save(p);
         }else{
-            ps.update(p,  indexE);
+            ps.update(p);
             indexE=-1;
         }
         limpiarFormulario();
@@ -91,7 +93,8 @@ public class ParticipanteController {
                             editarDatos(p, getIndex());
                         });
                         eliminarBtn.setOnAction(event -> {
-                            eliminarParticipante(getIndex());
+                            Participante p=getTableView().getItems().get(getIndex());
+                            eliminarParticipante(p.getDni().getValue());
                         });
                     }
                 @Override
@@ -118,8 +121,8 @@ public class ParticipanteController {
         listaParticipantes=FXCollections.observableArrayList(ps.findAll());
         tableView.setItems(listaParticipantes);
     }
-    public void eliminarParticipante(int index){
-        ps.delete(index);
+    public void eliminarParticipante(String dni){
+        ps.delete(dni);
         listarParticipantes();
     }
 
