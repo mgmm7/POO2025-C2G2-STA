@@ -79,6 +79,21 @@
 			<artifactId>hibernate-community-dialects</artifactId>
 			<version>6.4.4.Final</version>
 		</dependency>
+		<!--Web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.2.0</version>
+		</dependency>
 
 	</dependencies>
 
@@ -108,7 +123,7 @@
 						</exclude>
 					</excludes>
 					<!-- Configuracion de inicio de clase principal  -->
-					<mainClass>pe.edu.upeu.asistencia.Aplication</mainClass>
+					<mainClass>pe.edu.upeu.asistencia.AsistenciaApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

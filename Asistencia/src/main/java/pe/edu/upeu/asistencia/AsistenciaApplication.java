@@ -14,35 +14,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class AsistenciaApplication extends Application {
+public class AsistenciaApplication  {
 
-	private ConfigurableApplicationContext configurableApplicationContext;
-	private Parent parent;
-
+//http://172.22.3.28:8080/participantes
 
 	public static void main(String[] args) {
-		//SpringApplication.run(AsistenciaApplication.class, args);
-		launch(args);
-	}
+		SpringApplication.run(AsistenciaApplication.class, args);
 
-	@Override
-	public void init() throws Exception {
-		SpringApplicationBuilder builder = new SpringApplicationBuilder(AsistenciaApplication.class);
-		builder.application().setWebApplicationType(WebApplicationType.NONE);
-		configurableApplicationContext = builder.run(getParameters().getRaw().toArray(new String[0]));
-
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/maingui.fxml"));
-		fxmlLoader.setControllerFactory(configurableApplicationContext::getBean);
-		parent= fxmlLoader.load();
-	}
-
-	@Override
-	public void start(Stage stage) throws Exception {
-		Screen screen = Screen.getPrimary();
-		Rectangle2D bounds = screen.getBounds();
-		stage.setScene(new Scene(parent,bounds.getWidth(), bounds.getHeight()-80));
-		stage.setTitle("Spring Java-FX");
-		stage.show();
 	}
 
 
