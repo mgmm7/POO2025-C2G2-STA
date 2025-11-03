@@ -14,5 +14,4 @@ public class SessionManager {
         }
         return instance;
     }
-
 }

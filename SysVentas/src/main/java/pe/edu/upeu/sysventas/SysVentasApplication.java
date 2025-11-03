@@ -7,21 +7,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
-
 @SpringBootApplication
-public class SysVentasApplication extends Application {
+public class SysVentasApplication  extends Application {
+
 	private ConfigurableApplicationContext context;
 	private Parent parent;
 
 	public static void main(String[] args) {
-
 		//SpringApplication.run(SysVentasApplication.class, args);
 		launch(args);
 	}
@@ -31,6 +28,7 @@ public class SysVentasApplication extends Application {
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(SysVentasApplication.class);
 		builder.application().setWebApplicationType(WebApplicationType.NONE);
 		context=builder.run(getParameters().getRaw().toArray(new String[0]));
+
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
 		loader.setControllerFactory(context::getBean);
 		parent = loader.load();
@@ -46,4 +44,5 @@ public class SysVentasApplication extends Application {
 		stage.setTitle("SysVentas SysCenterLife");
 		stage.show();
 	}
+
 }

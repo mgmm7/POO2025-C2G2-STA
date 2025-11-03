@@ -6,11 +6,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pe.edu.upeu.sysventas.dto.PersonaDto;
-import pe.edu.upeu.sysventas.service.impl.CompraServiceImp;
 
 import java.io.IOException;
 
-public class ConsultaDNI {
+public  class ConsultaDNI {
 
     public PersonaDto consultarDNI(String dni){
 
@@ -48,11 +47,12 @@ public class ConsultaDNI {
             e.printStackTrace();
         }
         return personaDto;
-
     }
+
+
     public static void main(String[] args) {
         ConsultaDNI c=new ConsultaDNI();
-        PersonaDto p= c.consultarDNI("43631917");
+       PersonaDto p= c.consultarDNI("43631917");
         System.out.println(p.getDni()+" "+p.getNombre()+"  "+p.getApellidoPaterno()+"  "+p.getApellidoMaterno());
     }
 

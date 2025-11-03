@@ -1,5 +1,6 @@
 package pe.edu.upeu.sysventas.controller;
 
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,6 +28,7 @@ import java.io.IOException;
 
 @Controller
 public class LoginController {
+
     @Autowired
     private ApplicationContext context;
     @Autowired
@@ -37,38 +39,35 @@ public class LoginController {
     PasswordField txtClave;
     @FXML
     Button btnIngresar;
+
     @FXML
     public void cerrar(ActionEvent event) {
-        Stage stage = (Stage) ((Node)
-                event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
         Platform.exit();
         System.exit(0);
     }
+
     @FXML
     public void login(ActionEvent event) throws IOException {
         try {
-            Usuario usu=us.loginUsuario(txtUsuario.getText(),
-                    new String(txtClave.getText()));
+            Usuario usu=us.loginUsuario(txtUsuario.getText(), new String(txtClave.getText()));
             if (usu!=null) {
+
                 SessionManager.getInstance().setUserId(usu.getIdUsuario());
                 SessionManager.getInstance().setUserName(usu.getUser());
-
                 SessionManager.getInstance().setUserPerfil(usu.getIdPerfil().getNombre());
-                FXMLLoader loader = new
-                        FXMLLoader(getClass().getResource("/view/maingui.fxml"));
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/maingui.fxml"));
                 loader.setControllerFactory(context::getBean);
                 Parent mainRoot = loader.load();
                 Screen screen = Screen.getPrimary();
                 Rectangle2D bounds = screen.getBounds();
-                Scene mainScene = new Scene(mainRoot,bounds.getWidth(),
-                        bounds.getHeight()-30);
-
+                Scene mainScene = new Scene(mainRoot,bounds.getWidth(),bounds.getHeight()-30);
                 mainScene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
-                Stage stage = (Stage) ((Node)
-                        event.getSource()).getScene().getWindow();
-                stage.getIcons().add(new
-                        Image(getClass().getResource("/img/store.png").toExternalForm()));
+                Stage stage = (Stage) ((Node)  event.getSource()).getScene().getWindow();
+                stage.getIcons().add(new Image(getClass().getResource("/img/store.png").toExternalForm()));
+
                 stage.setScene(mainScene);
                 stage.setTitle("SysVentas SysCenterLife");
                 stage.setX(bounds.getMinX());
@@ -79,16 +78,16 @@ public class LoginController {
                 stage.setHeight(bounds.getHeight());
                 stage.show();
             } else {
-                Stage stage = (Stage) ((Node)
-                        event.getSource()).getScene().getWindow();
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 double with=stage.getWidth()*2;
                 double h=stage.getHeight()/2;
                 System.out.println(with + " h:"+h);
-                Toast.showToast(stage, "Credencial invalido!! intente nuevamente", 2000, with, h);
+                Toast.showToast(stage, "Credencial invalido!! intente  nuevamente", 2000, with, h);
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
+
 
 }

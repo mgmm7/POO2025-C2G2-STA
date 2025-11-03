@@ -24,6 +24,7 @@ import java.util.HashMap;
 public class VentaServiceImp extends CrudGenericoServiceImp<Venta, Long> implements IVentaService {
 
     private final VentaRepository ventaRepository;
+
     @Autowired
     private DataSource dataSource;
 
@@ -42,9 +43,9 @@ public class VentaServiceImp extends CrudGenericoServiceImp<Venta, Long> impleme
                 CAMINO.toAbsolutePath().toFile());
         return CAMINO.toFile();
     }
+
     @Override
-    public JasperPrint runReport(Long idv) throws JRException, SQLException
-    {
+    public JasperPrint runReport(Long idv) throws JRException, SQLException{
         // Verificar si la venta existe
         if (!ventaRepository.existsById(idv)) {
             throw new IllegalArgumentException("La venta con id " + idv + " no existe");
@@ -65,4 +66,5 @@ public class VentaServiceImp extends CrudGenericoServiceImp<Venta, Long> impleme
         return JasperFillManager.fillReport(jreport, param,
                 dataSource.getConnection());
     }
+
 }

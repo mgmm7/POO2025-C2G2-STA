@@ -57,6 +57,7 @@
 			<artifactId>hibernate-community-dialects</artifactId>
 			<version>6.4.4.Final</version>
 		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
 		<dependency>
 			<groupId>org.openjfx</groupId>
@@ -70,6 +71,7 @@
 			<version>21</version>
 		</dependency>
 
+		<!-- Validaciones campos -->
 		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
@@ -87,6 +89,7 @@
 			<version>4.0.2</version>
 		</dependency>
 
+		<!-- Serialización de campos -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -98,6 +101,7 @@
 			<artifactId>miglayout</artifactId>
 			<version>3.7.4</version>
 		</dependency>
+
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
@@ -113,6 +117,7 @@
 			<artifactId>jrviewer-fx</artifactId>
 			<version>0.1.1</version>
 		</dependency>
+
 		<!-- Importar de Excel -->
 		<dependency>
 			<groupId>org.apache.groovy</groupId>
@@ -124,6 +129,7 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.3</version>
 		</dependency>
+
 		<!-- Para Manejo Json -->
 		<dependency>
 			<groupId>org.jsoup</groupId>

@@ -13,8 +13,6 @@ import java.util.SortedSet;
 
 public class AutoCompleteTextField<T>{
 
-
-
     private TextField autoCompleteTextField;
     private final SortedSet<T> entries;
     private final ContextMenu entryMenu = new ContextMenu();

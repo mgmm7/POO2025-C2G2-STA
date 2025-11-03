@@ -11,6 +11,7 @@ import pe.edu.upeu.sysventas.service.ICategoriaService;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -21,6 +22,7 @@ public class CategoriaServiceImp extends CrudGenericoServiceImp<Categoria,Long> 
     protected ICrudGenericoRepository<Categoria, Long> getRepo() {
         return categoriaRepository;
     }
+
     @Override
     public List<ComboBoxOption> listarCombobox() {
         List<ComboBoxOption> listar=new ArrayList<>();
@@ -33,4 +35,5 @@ public class CategoriaServiceImp extends CrudGenericoServiceImp<Categoria,Long> 
         }
         return listar;
     }
+
 }

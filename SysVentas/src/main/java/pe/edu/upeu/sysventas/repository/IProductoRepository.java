@@ -9,10 +9,16 @@ import java.util.List;
 
 public interface IProductoRepository extends JpaRepository<Producto,Long> {
     // Aquí puedes agregar métodos personalizados si necesitas realizar consultas específicas
-    @Query(value = "SELECT p.* FROM upeu_producto p WHERE p.nombre like:filter", nativeQuery = true)
+    @Query(value = "SELECT p.* FROM upeu_producto p WHERE p.nombre like :filter", nativeQuery = true)
     List<Producto> listAutoCompletProducto(@Param("filter") String filter);
+
     @Query(value = "SELECT p.* FROM upeu_producto p WHERE p.id_marca=:filter", nativeQuery = true)
     List<Producto> listProductoMarca(@Param("filter") Integer filter);
-    @Query(value = "SELECT p FROM Producto p WHERE p.marca.idMarca = :filter")
+
+    @Query("SELECT p FROM Producto p WHERE p.marca.idMarca = :filter")
     List<Producto> listProductoMarcaJ(@Param("filter") Integer filter);
+
+
+
+
 }
