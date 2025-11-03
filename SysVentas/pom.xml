@@ -51,6 +51,7 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.46.0.0</version>
 		</dependency>
+
 		<!-- Hibernate dialect for SQLite -->
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
@@ -101,16 +102,16 @@
 			<artifactId>miglayout</artifactId>
 			<version>3.7.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>7.0.3</version>
+			<version>6.21.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-swing</artifactId>
-			<version>11-ea+24</version>
+			<version>21.0.2</version>
+			<!--<version>11-ea+24</version>-->
 		</dependency>
 		<dependency>
 			<groupId>win.zqxu</groupId>
