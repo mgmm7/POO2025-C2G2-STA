@@ -1,6 +1,10 @@
 package pe.edu.upeu.sysventas.controller;
 
-
+import com.github.anastaciocintra.escpos.EscPos;
+import com.github.anastaciocintra.escpos.EscPosConst;
+import com.github.anastaciocintra.escpos.Style;
+import com.github.anastaciocintra.escpos.barcode.QRCode;
+import com.github.anastaciocintra.output.PrinterOutputStream;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -21,7 +25,10 @@ import pe.edu.upeu.sysventas.model.Venta;
 import pe.edu.upeu.sysventas.model.VentaDetalle;
 import pe.edu.upeu.sysventas.service.*;
 import pe.edu.upeu.sysventas.utils.ConsultaDNI;
+import pe.edu.upeu.sysventas.utils.PrinterManager;
 
+import javax.print.PrintService;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -29,6 +36,7 @@ import java.util.function.Consumer;
 
 @Controller
 public class VentaController {
+
     @FXML
     TextField autocompProducto;
     @FXML
@@ -61,6 +69,7 @@ public class VentaController {
     @Autowired
     IVentaDetalleService daoVD;
     Stage stage;
+
     @FXML
     private AnchorPane miContenedor;
     private JasperPrint jasperPrint;
@@ -70,8 +79,10 @@ public class VentaController {
     private final SortedSet<ModeloDataAutocomplet> entriesC = new
             TreeSet<>((ModeloDataAutocomplet o1, ModeloDataAutocomplet o2) ->
             o1.toString().compareTo(o2.toString()));
+
     @Autowired
     ConsultaDNI cDni;
+
     public void listarProducto(){
         entries.addAll(ps.listAutoCompletProducto());
     }
@@ -79,6 +90,7 @@ public class VentaController {
         entriesC.clear();
         entriesC.addAll(cs.listAutoCompletCliente());
     }
+
     public void autoCompletarCliente(){
         actfC=new AutoCompleteTextField<>(entriesC, autocompCliente);
         autocompCliente.setOnKeyReleased(e->{
@@ -94,15 +106,32 @@ public class VentaController {
             }
         });
     }
+
     public void limpiarFormCliente(){
         razonSocial.clear();
         dniRuc.clear();
         txtDireccion.clear();
     }
+
+    public void listar(){
+        tableView.getItems().clear();
+        List<VentCarrito> lista=daoC.listaCarritoCliente(dniRuc.getText());
+        double impoTotal = 0, igv = 0;
+        for (VentCarrito dato: lista){
+            impoTotal += Double.parseDouble(String.valueOf(dato.getPtotal()));
+        }
+        txtImporteT.setText(String.valueOf(impoTotal));
+        double pv = impoTotal / 1.18;
+        txtBaseImp.setText(String.valueOf(Math.round(pv * 100.0) / 100.0));
+        txtIgv.setText(String.valueOf(Math.round((pv * 0.18) * 100.0) /
+                100.0));
+        tableView.getItems().addAll(lista);
+    }
+
     public void consultarDNIReniec(double with){
         PersonaDto p=cDni.consultarDNI(autocompCliente.getText());
         if(p!=null){
-            razonSocial.setText(p.getNombre()+" "+p.getApellidoPaterno()+""+p.getApellidoMaterno());
+            razonSocial.setText(p.getNombre()+" "+p.getApellidoPaterno()+" "+p.getApellidoMaterno());
                     dniRuc.setText(p.getDni());
             btnRegCliente.setDisable(false);
             Toast.showToast(stage, "El cliente se encontró en RENIEC para registrar debe hacer clik en Add", 2000, with, 50);
@@ -111,6 +140,7 @@ public class VentaController {
             Toast.showToast(stage, "El cliente no se encuentra en RENIEC y debe registrar a través del formulario de cliente", 2000, with, 50);
         }
     }
+
     @FXML
     public void buscarClienteCdni(){
         limpiarFormCliente();
@@ -135,6 +165,7 @@ public class VentaController {
             Toast.showToast(stage, "El valor buscado debe tener 8 o 11 digitos", 2000, with, 50);
         }
     }
+
     public void deleteReg(VentCarrito obj) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmación");
@@ -151,44 +182,39 @@ public class VentaController {
             System.out.println("Acción cancelada");
         }
     }
+
     public void personalizarTabla(){
         TableViewHelper<VentCarrito> tableViewHelper = new TableViewHelper<>();
         LinkedHashMap<String, ColumnInfo> columns = new LinkedHashMap<>();
-        columns.put("ID Prod", new ColumnInfo("producto.idProducto", 100.0));// Columna visible "Columna 1" mapea al campo "campo1"
-        columns.put("Nombre Producto", new ColumnInfo("nombreProducto", 300.0)); // Columna visible "Columna 1" mapea al campo "campo1"
+        columns.put("ID Prod", new ColumnInfo("producto.idProducto", 100.0)); // Columna visible "Columna 1" mapea al campo "campo1"
+        columns.put("Nombre Producto", new ColumnInfo("nombreProducto",  300.0)); // Columna visible "Columna 1" mapea al campo "campo1"
         columns.put("Cantidad", new ColumnInfo("cantidad", 60.0)); // Columna visible "Columna 2" mapea al campo "campo2"
-        columns.put("P.Unitario", new ColumnInfo("punitario", 100.0)); //Columna visible "Columna 2" mapea al campo "campo2"
+        columns.put("P.Unitario", new ColumnInfo("punitario", 100.0)); // Columna visible "Columna 2" mapea al campo "campo2"
         columns.put("P.Total", new ColumnInfo("ptotal", 100.0)); // Columna visible "Columna 2" mapea al campo "campo2"
+
         Consumer<VentCarrito> updateAction = (VentCarrito ventCarrito) -> {
             System.out.println("Actualizar: " + ventCarrito); };
         Consumer<VentCarrito> deleteAction = (VentCarrito ventCarrito) ->
         {deleteReg(ventCarrito); };
+
         tableViewHelper.addColumnsInOrderWithSize(tableView,
                 columns,updateAction, deleteAction );
+
         tableView.setTableMenuButtonVisible(true);
     }
-    public void listar(){
-        tableView.getItems().clear();
-        List<VentCarrito> lista=daoC.listaCarritoCliente(dniRuc.getText());
-        double impoTotal = 0, igv = 0;
-        for (VentCarrito dato: lista){
-            impoTotal += Double.parseDouble(String.valueOf(dato.getPtotal()));
-        }
-        txtImporteT.setText(String.valueOf(impoTotal));
-        double pv = impoTotal / 1.18;
-        txtBaseImp.setText(String.valueOf(Math.round(pv * 100.0) / 100.0));
-        txtIgv.setText(String.valueOf(Math.round((pv * 0.18) * 100.0) /
-                100.0));
-        tableView.getItems().addAll(lista);
-    }
+
+
     @FXML
     public void initialize(){
+
         Platform.runLater(() -> {
             stage = (Stage) miContenedor.getScene().getWindow();
             System.out.println("El título del stage es: " + stage.getTitle());
         });
+
         listarCliente();
         autoCompletarCliente();
+
         listarProducto();
         actf=new AutoCompleteTextField<>(entries, autocompProducto);
         autocompProducto.setOnKeyReleased(e->{
@@ -202,10 +228,13 @@ public class VentaController {
                 stockPro.setText(dato[1]);
             }
         });
+
         personalizarTabla();
         btnRegCarrito.setDisable(true);
         btnRegCliente.setDisable(true);
     }
+
+
     @FXML
     public void guardarCliente(){
         Stage stage = StageManager.getPrimaryStage();
@@ -227,6 +256,7 @@ public class VentaController {
                     50);
         }
     }
+
     @FXML
     private void calcularPT(){
         if(!cantidadPro.getText().equals("")){
@@ -243,6 +273,7 @@ public class VentaController {
             btnRegCarrito.setDisable(true);
         }
     }
+
     @FXML
     private void registarPCarrito(){
         try {
@@ -263,6 +294,8 @@ public class VentaController {
             System.out.println(e.getMessage());
         }
     }
+
+
     @FXML
     public void registrarVenta(){
         Locale locale = new Locale("es", "es-PE");
@@ -298,6 +331,74 @@ public class VentaController {
         }
         daoC.deleteCarAll(dniRuc.getText());
         listar();
+        try {
+            print(idX.getIdVenta());
+            jasperPrint= daoV.runReport(Long.parseLong(String.valueOf(idX.getIdVenta())));
+            Platform.runLater(() -> {
+                ReportAlert reportAlert=new ReportAlert(jasperPrint);
+                reportAlert.show();
+                //ReportDialog reportDialog = new ReportDialog(jasperPrint);
+                //reportDialog.show();
+            });
+        }catch (Exception e){
+            System.out.println("VER:"+e.getMessage());
+        }
+
     }
 
+    public void print(Long idv) {
+        Venta vt = daoV.findById(idv);
+        try {
+            PrinterManager printerManager = PrinterManager.getInstance();
+            PrintService printService = printerManager.getPrintService();
+            PrinterOutputStream printerOutputStream = new PrinterOutputStream(printService);
+            EscPos escpos = new EscPos(printerOutputStream);
+
+            Style titleStyle = new Style()
+                    .setJustification(EscPosConst.Justification.Center)
+                    .setBold(true)
+                    .setFontSize(Style.FontSize._2, Style.FontSize._2);
+            Style normal = new Style()
+                    .setJustification(EscPosConst.Justification.Left_Default);
+            Style center = new Style()
+                    .setJustification(EscPosConst.Justification.Center);
+            escpos.writeLF(titleStyle, "BOLETA DE VENTA");
+            escpos.writeLF(center, "Tienda Demo S.A.C.");
+            escpos.writeLF(center, "RUC: 12345678901");
+            escpos.writeLF(center, "Av. Principal 123 - Lima");
+            escpos.writeLF(center, "--------------------------------");
+            //Datos del cliente
+            escpos.writeLF(normal, "Cliente: " + vt.getCliente().getNombres());
+            escpos.writeLF(normal, "DNI: " + vt.getCliente().getDniruc());
+            escpos.writeLF(normal, "Fecha: " + vt.getFechaGener() + "");
+            escpos.writeLF(normal, "--------------------------------");
+            //Detalle
+            escpos.writeLF(normal, "Cant Descripción Importe");
+            //int x = 1;
+            for (VentaDetalle vd : vt.getVentaDetalles()) {
+                String punit = vd.getCantidad() + " " + vd.getProducto().getNombre() + " S/ " + vd.getSubtotal() + "";
+                escpos.writeLF(normal, punit);
+            }
+            escpos.writeLF(normal, "--------------------------------");
+            escpos.writeLF(normal, "TOTAL: S/" + vt.getPrecioTotal() + "");
+            escpos.writeLF(normal, "--------------------------------");
+            //Agregar QR con los datos principales
+            String qrData = "Boleta N°001-000123 | Total: S/ " + vt.getPrecioTotal() + " | Fecha: " + vt.getFechaGener();
+            QRCode qrCode = new QRCode()
+                    .setJustification(EscPosConst.Justification.Center)
+                    .setErrorCorrectionLevel(QRCode.QRErrorCorrectionLevel.QR_ECLEVEL_M_Default)
+                    .setModel(QRCode.QRModel._1_Default);
+            escpos.write(qrCode, qrData);
+            escpos.feed(2);
+            escpos.writeLF(center, "Gracias por su compra!");
+            escpos.feed(6);
+            //Corte total
+            escpos.cut(EscPos.CutMode.FULL);
+            escpos.close();
+            System.out.println("Boleta impresa correctamente.");
+            System.out.println("Impresión completada correctamente.");
+        } catch (IOException e) {
+            System.err.println("Error al inicializar la impresora: " + e.getMessage());
+        }
+    }
 }

@@ -63,6 +63,7 @@ public class VentaServiceImp extends CrudGenericoServiceImp<Venta, Long> impleme
         JasperDesign jdesign =
                 JRXmlLoader.load(getFile("comprobante.jrxml"));
         JasperReport jreport = JasperCompileManager.compileReport(jdesign);
+        // Llenar el informe
         try (Connection conn = dataSource.getConnection()) {
             //return JasperFillManager.fillReport(jreport, param, conn);
             return JasperFillManager.fillReport(jreport, param,
